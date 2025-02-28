@@ -14,6 +14,15 @@ class UserOnboardingTransaction
   end
 
   def persist_user(email)
-    Success({ success: true, email: email })
+    user = User.new(email)
+    Success({success_records: [user] })
+  end
+end
+
+class User
+  attr_reader :email
+
+  def initialize(email)
+    @email = email
   end
 end
