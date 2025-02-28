@@ -1,5 +1,18 @@
 require 'dry/transaction'
+require 'dry/container'
 require_relative 'user'
+
+class Container
+  extend Dry::Container::Mixin
+end
+class UserRepository
+  def self.save!(user)
+    true
+  end
+end
+
+Container.register(:user_repository, UserRepository)
+
 
 class UserOnboardingTransaction
   include Dry::Transaction
@@ -16,6 +29,8 @@ class UserOnboardingTransaction
 
   def persist_user(email)
     user = User.new(email)
+    storage = Container.resolve(:user_repository)
+    storage.save!(user)
     Success({success_records: [user] })
   end
 end
