@@ -1,5 +1,6 @@
 require 'test_helper'
 require 'user_onboarding_transaction'
+require 'dry/container/stub'
 
 class UserOnboardingTransactionTest < Minitest::Test
   def test_success_flow
@@ -22,4 +23,21 @@ class UserOnboardingTransactionTest < Minitest::Test
     assert_equal result.failure, :email_missing
   end
 
+  def test_failed_to_persist_user
+    Container.enable_stubs!
+    Container.stub(:user_repository, ConnectionErrorUserRepository.new)
+
+    transaction = UserOnboardingTransaction.new
+
+    result = transaction.call(email: 'test@test.com')
+    assert_equal result.success?, false
+    assert_equal result.failure, :connection_error
+    Container.unstub
+  end
+
+  class ConnectionErrorUserRepository
+    def save!(user)
+      raise ::UserRepository::ConnectionError
+    end
+  end
 end

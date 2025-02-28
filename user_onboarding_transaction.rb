@@ -9,10 +9,11 @@ class UserRepository
   def self.save!(user)
     true
   end
+
+  class ConnectionError < StandardError; end
 end
 
 Container.register(:user_repository, UserRepository)
-
 
 class UserOnboardingTransaction
   include Dry::Transaction
@@ -32,5 +33,7 @@ class UserOnboardingTransaction
     storage = Container.resolve(:user_repository)
     storage.save!(user)
     Success({success_records: [user] })
+  rescue ::UserRepository::ConnectionError
+    Failure(:connection_error)
   end
 end
