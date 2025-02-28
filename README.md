@@ -11,5 +11,5 @@ bundle install
 ## Run
 
 ```
-rake
+bundle exec rake
 ```
