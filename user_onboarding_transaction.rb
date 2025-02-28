@@ -1,4 +1,5 @@
 require 'dry/transaction'
+require_relative 'user'
 
 class UserOnboardingTransaction
   include Dry::Transaction
@@ -16,13 +17,5 @@ class UserOnboardingTransaction
   def persist_user(email)
     user = User.new(email)
     Success({success_records: [user] })
-  end
-end
-
-class User
-  attr_reader :email
-
-  def initialize(email)
-    @email = email
   end
 end
